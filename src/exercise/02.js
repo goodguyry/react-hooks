@@ -5,11 +5,15 @@ import * as React from 'react'
 
 function useLocalStorageState(key, initialValue = '') {
   const [value, setValue] = React.useState(
-    () => window.localStorage.getItem(key) || initialValue,
+    () => window.localStorage.getItem(key) || JSON.stringify(initialValue),
   )
 
   React.useEffect(() => {
-    window.localStorage.setItem(key, value);
+    const readyValue = 'string' === typeof value
+      ? value
+      : JSON.stringify(value);
+
+    window.localStorage.setItem(key, readyValue);
   }, [key, value]);
 
   return [value, setValue];
@@ -21,6 +25,7 @@ function Greeting({initialValue = ''}) {
   function handleChange(event) {
     setName(event.target.value)
   }
+
   return (
     <div>
       <form>
@@ -33,7 +38,7 @@ function Greeting({initialValue = ''}) {
 }
 
 function App() {
-  return <Greeting />
+  return <Greeting initialValue={['Ryan', 'Domingue']} />
 }
 
 export default App
